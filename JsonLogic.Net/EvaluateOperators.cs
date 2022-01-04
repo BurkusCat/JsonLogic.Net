@@ -322,11 +322,6 @@ namespace JsonLogic.Net
                 return PlusTime((string)dateTimeString, (int)amount, timeUnit);
             });
 
-            AddOperator("minusTime", (p, args, data) =>
-            {
-                return true;
-            });
-
             AddOperator("extractFromUVCI", (p, args, data) =>
             {
                 var uvci = p.Apply(args[0], data);
