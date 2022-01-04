@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
 namespace JsonLogic.Net
@@ -302,9 +303,37 @@ namespace JsonLogic.Net
                 return true;
             });
 
+            var optionalPrefix = "URN:UVCI:";
+
+            // The fragment with given index from the UVCI string
+            // (see Annex 2 in the[UVCI specification](https://ec.europa.eu/health/sites/default/files/ehealth/docs/vaccination-proof_interoperability-guidelines_en.pdf)),
+            // or `null` when that fragment doesn't exist.
             AddOperator("extractFromUVCI", (p, args, data) =>
             {
-                return true;
+                var uvciParam = p.Apply(args[0], data);
+                var indexParam = args[1];
+
+                if (!(uvciParam == null || uvciParam is string))
+                {
+                    throw new Exception("UVCI argument(#1) of 'extractFromUVCI' must be either a string or null");
+                }
+
+                if (indexParam is int)
+                {
+                    throw new Exception("index argument(#2) of 'extractFromUVCI' must be an integer");
+                }
+
+                var uvci = uvciParam as string;
+                var index = (int)indexParam;
+
+                if (uvci == null || index < 0)
+                {
+                    return null;
+                }
+
+                var prefixlessUvci = uvci.StartsWith(optionalPrefix) ? uvci.Substring(optionalPrefix.Length) : uvci;
+                var fragments = Regex.Split(prefixlessUvci, "/[/#:]/");
+                return index < fragments.Length ? fragments[index] : null;
             });
         }
 
