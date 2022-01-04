@@ -378,17 +378,7 @@ namespace JsonLogic.Net
             }
             else if (timeUnit == "year")
             {
-                var wasMonth = dateTime.Month;
-
-                dateTime = dateTime.AddYears(amount);
-
-                // don't know why this is needed yet
-                if (dateTime.Month > wasMonth)
-                {
-                    dateTime = dateTime.AddDays(-1);
-                }
-
-                return dateTime;
+                return dateTime.AddYears(amount);
             }
             else
             {
