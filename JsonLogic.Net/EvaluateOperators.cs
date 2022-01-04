@@ -299,10 +299,8 @@ namespace JsonLogic.Net
                 var amount = args[1];
                 var timeUnit = (string)args[2];
 
-                /**
-                 * All time units as an array.
-                 */
-                var timeUnits = new string[] { "year", "month", "day", "hour" };
+                // All time units as an array.
+                var timeUnits = new string[] { "year", "month", "day", "hour", "minute", "second" };
 
                 if (!(amount is int))
                 {
@@ -367,6 +365,14 @@ namespace JsonLogic.Net
             if (timeUnit == "day")
             {
                 return dateTime.AddDays(amount);
+            }
+            else if (timeUnit == "second")
+            {
+                return dateTime.AddSeconds(amount);
+            }
+            else if (timeUnit == "minute")
+            {
+                return dateTime.AddMinutes(amount);
             }
             else if (timeUnit == "hour")
             {
