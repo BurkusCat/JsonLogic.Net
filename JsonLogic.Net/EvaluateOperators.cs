@@ -355,7 +355,9 @@ namespace JsonLogic.Net
         /// <returns>Modified date time</returns>
         private DateTime PlusTime(string dateTimeString, int amount, string timeUnit)
         {
-            var dateTime = DateFromString(dateTimeString);
+            // the JS version of the library uses a weird regex parse for the date
+            // might be needed if this doesn't work for us
+            var dateTime = DateTime.Parse(dateTimeString);
 
             if (amount == 0)
             {
@@ -392,13 +394,6 @@ namespace JsonLogic.Net
             {
                 throw new Exception($"unknown time unit '{timeUnit}'");
             }
-        }
-
-        private DateTime DateFromString(string dateTimeString)
-        {
-            return DateTime.Parse(dateTimeString);
-            // todo swap this out with a method to dateFromString
-            // export const dateFromString = (str: string) => {
         }
 
         private const string optionalPrefix = "URN:UVCI:";
