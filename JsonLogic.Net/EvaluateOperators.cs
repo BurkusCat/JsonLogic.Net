@@ -295,7 +295,31 @@ namespace JsonLogic.Net
 
             AddOperator("plusTime", (p, args, data) =>
             {
-                return true;
+                var dateTimeString = p.Apply(args[0], data);
+                var amount = args[1];
+                var timeUnit = (string)args[2];
+
+                /**
+                 * All time units as an array.
+                 */
+                var timeUnits = new string[] { "year", "month", "day", "hour" };
+
+                if (!(amount is int))
+                {
+                    throw new Exception("'amount' argument (#2) of 'plusTime' must be an integer");
+                }
+
+                if (!timeUnits.Contains(timeUnit))
+                {
+                    throw new Exception($"'unit' argument (#3) of 'plusTime' must be a string with one of the time units: ${string.Join(", ", timeUnits)}");
+                }
+
+                if (!(dateTimeString == null || dateTimeString is string))
+                {
+                    throw new Exception("'date' argument (#1) of 'plusTime' must be a string");
+                }
+
+                return PlusTime((string)dateTimeString, (int)amount, timeUnit);
             });
 
             AddOperator("minusTime", (p, args, data) =>
@@ -310,16 +334,76 @@ namespace JsonLogic.Net
 
                 if (!(uvci == null || uvci is string))
                 {
-                    throw new Exception("UVCI argument(#1) of 'extractFromUVCI' must be either a string or null");
+                    throw new Exception("'UVCI' argument(#1) of 'extractFromUVCI' must be either a string or null");
                 }
 
-                if (index is int)
+                if (!(index is int))
                 {
-                    throw new Exception("index argument(#2) of 'extractFromUVCI' must be an integer");
+                    throw new Exception("'index' argument(#2) of 'extractFromUVCI' must be an integer");
                 }
 
                 return ExtractFragmentFromUvci((string)uvci, (int)index);
             });
+        }
+
+        /// <summary>
+        /// A date-time offset operation.
+        ///
+        /// A time unit is one of the following string values: "year", "month", "day", "hour".
+        ///
+        /// To convert a date(-time) string to a date-time value, specify an amount of 0, and any time unit.
+        /// Note that plusTime does not permit other date-time values: expressions such as plusTime(plusTime("...", 0, "hour"), 10, "day") are not valid.
+        /// </summary>
+        /// <param name="dateTimeString">a date-time in the allowed string format</param>
+        /// <param name="amount">the number of days/hours to add (may be negative)</param>
+        /// <param name="timeUnit">string with a time unit</param>
+        /// <returns>Modified date time</returns>
+        private DateTime PlusTime(string dateTimeString, int amount, string timeUnit)
+        {
+            var dateTime = DateFromString(dateTimeString);
+
+            if (amount == 0)
+            {
+                return dateTime;
+            }
+
+            if (timeUnit == "day")
+            {
+                return dateTime.AddDays(amount);
+            }
+            else if (timeUnit == "hour")
+            {
+                return dateTime.AddHours(amount);
+            }
+            else if (timeUnit == "month")
+            {
+                return dateTime.AddMonths(amount);
+            }
+            else if (timeUnit == "year")
+            {
+                var wasMonth = dateTime.Month;
+
+                dateTime = dateTime.AddYears(amount);
+
+                // don't know why this is needed yet
+                if (dateTime.Month > wasMonth)
+                {
+                    dateTime = dateTime.AddDays(-1);
+                }
+
+                return dateTime;
+            }
+            else
+            {
+                throw new Exception($"unknown time unit '{timeUnit}'");
+            }
+        }
+
+        private DateTime DateFromString(string dateTimeString)
+        {
+            return DateTime.Parse(dateTimeString);
+            // todo swap this out with a method to dateFromString
+            // export const dateFromString = (str: string) => {
         }
 
         private const string optionalPrefix = "URN:UVCI:";
