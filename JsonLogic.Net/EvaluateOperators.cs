@@ -291,6 +291,21 @@ namespace JsonLogic.Net
                 if (args.Length >= 2) return p.Apply(args[1], local);
                 else return local; // return result of source evaluation
             });
+
+            AddOperator("plusTime", (p, args, data) =>
+            {
+                return true;
+            });
+
+            AddOperator("minusTime", (p, args, data) =>
+            {
+                return true;
+            });
+
+            AddOperator("extractFromUVCI", (p, args, data) =>
+            {
+                return true;
+            });
         }
 
         private object GetValueByName(object data, string namePath)
