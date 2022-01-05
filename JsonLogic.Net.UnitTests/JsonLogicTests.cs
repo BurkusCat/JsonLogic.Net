@@ -205,40 +205,108 @@ namespace JsonLogic.Net.UnitTests
 
         public static IEnumerable<object[]> PlusTimeTestData = new List<object[]>()
         {
+            // basic cases
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 3, `day`]}",
-                DateTime.Parse("2011-08-15T20:17:46.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 3, `day`]}", DateTime.Parse("2011-08-15T20:17:46.3840000Z").ToUniversalTime(),
             },
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 6, `day`]}",
-                DateTime.Parse("2011-08-18T20:17:46.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 6, `day`]}", DateTime.Parse("2011-08-18T20:17:46.3840000Z").ToUniversalTime(),
             },
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 1, `year`]}",
-                DateTime.Parse("2012-08-12T20:17:46.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 1, `year`]}", DateTime.Parse("2012-08-12T20:17:46.3840000Z").ToUniversalTime(),
             },
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 1, `month`]}",
-                DateTime.Parse("2011-09-12T20:17:46.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 1, `month`]}", DateTime.Parse("2011-09-12T20:17:46.3840000Z").ToUniversalTime(),
             },
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 3, `hour`]}",
-                DateTime.Parse("2011-08-12T23:17:46.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 3, `hour`]}", DateTime.Parse("2011-08-12T23:17:46.3840000Z").ToUniversalTime(),
             },
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 10, `minute`]}",
-                DateTime.Parse("2011-08-12T20:27:46.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 10, `minute`]}", DateTime.Parse("2011-08-12T20:27:46.3840000Z").ToUniversalTime(),
             },
             new object[]
             {
-                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 5, `second`]}",
-                DateTime.Parse("2011-08-12T20:17:51.3840000Z").ToUniversalTime(),
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 5, `second`]}", DateTime.Parse("2011-08-12T20:17:51.3840000Z").ToUniversalTime(),
+            },
+
+            // works for 1-day offsets
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, 1, `day`]}", DateTime.Parse("2021-06-24T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, -1, `day`]}", DateTime.Parse("2021-06-22T00:00:00.000Z").ToUniversalTime(),
+            },
+
+            // works for 1-hour offsets
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, 1, `hour`]}", DateTime.Parse("2021-06-23T01:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, -1, `hour`]}", DateTime.Parse("2021-06-22T23:00:00.000Z").ToUniversalTime(),
+            },
+
+            // works for day-offsets in hours
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, 24, `hour`]}", DateTime.Parse("2021-06-24T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, 48, `hour`]}", DateTime.Parse("2021-06-25T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, 72, `hour`]}", DateTime.Parse("2021-06-26T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, -24, `hour`]}", DateTime.Parse("2021-06-22T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, -48, `hour`]}", DateTime.Parse("2021-06-21T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, -72, `hour`]}", DateTime.Parse("2021-06-20T00:00:00.000Z").ToUniversalTime(),
+            },
+
+            // not affected by DST transitions
+            new object[]
+            {
+                "{`plusTime`: [`2021-06-23T00:00:00.000Z`, -180, `day`]}", DateTime.Parse("2020-12-25T00:00:00.000Z").ToUniversalTime(),
+            },
+
+            // works for month offsets
+            new object[]
+            {
+                "{`plusTime`: [`2021-02-01T00:00:00.000Z`, 0, `month`]}", DateTime.Parse("2021-02-01T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-02-01T00:00:00.000Z`, 1, `month`]}", DateTime.Parse("2021-03-01T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-12-01T00:00:00.000Z`, 1, `month`]}", DateTime.Parse("2022-01-01T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2021-12-01T00:00:00.000Z`, -12, `month`]}", DateTime.Parse("2020-12-01T00:00:00.000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2020-02-29T00:00:00.000Z`, 1, `month`]}", DateTime.Parse("2020-03-29T00:00:00.000Z").ToUniversalTime(),
             },
         };
 
