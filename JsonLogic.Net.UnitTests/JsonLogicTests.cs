@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -28,7 +27,7 @@ namespace JsonLogic.Net.UnitTests
                 a.city = "Gotham";
                 a.zip = "33333";
             });
-            d.luckyNumbers = new int[] {3, 5, 7};
+            d.luckyNumbers = new int[] { 3, 5, 7 };
             d.items = new object[0];
         });
 
@@ -52,14 +51,12 @@ namespace JsonLogic.Net.UnitTests
         [InlineData("{`+`: [`musketeers`, 3]}", "musketeers3")]
         [InlineData("{`+`: 2}", 2d)]
         [InlineData("{`+`: -2}", -2d)]
-
         [InlineData("{`-`: [0,0]}", 0d)]
         [InlineData("{`-`: [0,1]}", -1d)]
         [InlineData("{`-`: [0,1,2]}", -3d)]
         [InlineData("{`-`: [1.5, 0.3]}", 1.2d)]
         [InlineData("{`-`: 2}", -2d)]
         [InlineData("{`-`: -2}", 2d)]
-
         [InlineData("{`*`: [0,0]}", 0d)]
         [InlineData("{`*`: [-1,1]}", -1d)]
         [InlineData("{`*`: [-2,1.5]}", -3d)]
@@ -108,9 +105,8 @@ namespace JsonLogic.Net.UnitTests
         [InlineData("{`var`: `address.zip`}", "33333")]
         [InlineData("{`var`: [`nonexistent`, `default-value`]}", "default-value")]
         [InlineData("{`var`: `luckyNumbers.1`}", 5)]
-
-        [InlineData("{`missing`:[`a`, `b`, `name`]}", new object[] {"a", "b"})]
-        [InlineData("{`missing_some`:[2, [`a`, `b`, `name`]]}", new object[] {"a", "b"})]
+        [InlineData("{`missing`:[`a`, `b`, `name`]}", new object[] { "a", "b" })]
+        [InlineData("{`missing_some`:[2, [`a`, `b`, `name`]]}", new object[] { "a", "b" })]
         [InlineData("{`missing_some`:[1, [`a`, `b`, `name`]]}", new object[0])]
 
         [InlineData("{`and`: [true, true]}", true)]
@@ -130,9 +126,9 @@ namespace JsonLogic.Net.UnitTests
         [InlineData("{`if`: [false, `yes`, true, `maybe`, `no`]}", "maybe")]
         [InlineData("{`if`: [true, `yes`, true, `maybe`, `no`]}", "yes")]
 
-        [InlineData("{`map`: [{`var`:`luckyNumbers`}, {`*`: [{`var`:``}, 3]} ]}", new object[] {9, 15, 21})]
-        [InlineData("{`filter`: [{`var`:`luckyNumbers`}, {`>`: [{`var`:``}, 5]} ]}", new object[] {7})]
-        [InlineData("{`filter`: [{`var`:`luckyNumbers`}, {`>=`: [{`var`:``}, 5]} ]}", new object[] {5, 7})]
+        [InlineData("{`map`: [{`var`:`luckyNumbers`}, {`*`: [{`var`:``}, 3]} ]}", new object[] { 9, 15, 21 })]
+        [InlineData("{`filter`: [{`var`:`luckyNumbers`}, {`>`: [{`var`:``}, 5]} ]}", new object[] { 7 })]
+        [InlineData("{`filter`: [{`var`:`luckyNumbers`}, {`>=`: [{`var`:``}, 5]} ]}", new object[] { 5, 7 })]
         [InlineData("{`reduce`: [{`var`:`luckyNumbers`}, {`+`: [{`var`:`current`}, {`var`:`accumulator`}]}, 10 ]}",
             25d)]
         [InlineData("{`all`: [{`var`:`luckyNumbers`}, {`>`: [{`var`:``}, 1]} ]}", true)]
@@ -140,24 +136,40 @@ namespace JsonLogic.Net.UnitTests
         [InlineData("{`none`: [{`var`:`luckyNumbers`}, {`<=`: [{`var`:``}, 3]} ]}", false)]
         [InlineData("{`some`: [{`var`:`luckyNumbers`}, {`<=`: [{`var`:``}, 3]} ]}", true)]
         [InlineData("{`some`:[{`var`:`luckyNumbers`},{`==`:[{`var`:``},3]}]}", true)]
-        [InlineData("{`merge`:[ [1,2], [3,4] ]}", new object[] {1, 2, 3, 4})]
-        [InlineData("{`merge`:[ 1,2, [3,4] ]}", new object[] {1, 2, 3, 4})]
+        [InlineData("{`merge`:[ [1,2], [3,4] ]}", new object[] { 1, 2, 3, 4 })]
+        [InlineData("{`merge`:[ 1,2, [3,4] ]}", new object[] { 1, 2, 3, 4 })]
         [InlineData("{`in`:[ 1, [3,4,1] ]}", true)]
         [InlineData("{`in`:[ 2, [3,4,1] ]}", false)]
 
         [InlineData("{`in`: [`Spring`, `Springfield`]}", true)]
         [InlineData("{`in`: [`Springs`, `Springfield`]}", false)]
         [InlineData("{`in`: [`spring`, `Springfield`]}", false)]
-        
+
         [InlineData("{`in`:[`/homePage`,{`var`:`page.url`}]}", false)]
-        
+
         [InlineData("{`cat`: [`spring`, `field`]}", "springfield")]
         [InlineData("{`substr`: [`springfield`, 6]}", "field")]
         [InlineData("{`substr`: [`springfield`, 6, 3]}", "fie")]
         [InlineData("{`substr`: [`springfield`, -3]}", "eld")]
         [InlineData("{`log`: `apple`}", "apple")]
-
         [InlineData("{`all`:[{`var`:`items`},{`>=`:[{`var`:`qty`},1]}]}", false)]
+
+        [InlineData("{`extractFromUVCI`: [`URN:UVCI:01:GB:1626566125G2AV4UB5SWM#I`, 0]}", "01")]
+        [InlineData("{`extractFromUVCI`: [`URN:UVCI:01:GB:1626566125G2AV4UB5SWM#I`, 1]}", "GB")]
+        [InlineData("{`extractFromUVCI`: [`URN:UVCI:01:GB:1626566125G2AV4UB5SWM#I`, 2]}", "1626566125G2AV4UB5SWM")]
+        [InlineData("{`extractFromUVCI`: [`URN:UVCI:01:GB:1626566125G2AV4UB5SWM#I`, 3]}", "I")]
+        [InlineData("{`extractFromUVCI`: [`01:GB:1626566125G2AV4UB5SWM#I`, 0]}", "01")]
+        [InlineData("{`extractFromUVCI`: [`01:GB:1626566125G2AV4UB5SWM#I`, 1]}", "GB")]
+        [InlineData("{`extractFromUVCI`: [`01:GB:1626566125G2AV4UB5SWM#I`, 2]}", "1626566125G2AV4UB5SWM")]
+        [InlineData("{`extractFromUVCI`: [`01:GB:1626566125G2AV4UB5SWM#I`, 3]}", "I")]
+
+        // The string "a::c/#/f" contains 6 fragments according to the CertLogic spec
+        [InlineData("{`extractFromUVCI`: [`a::c/#/f`, 0]}", "a")]
+        [InlineData("{`extractFromUVCI`: [`a::c/#/f`, 1]}", "")]
+        [InlineData("{`extractFromUVCI`: [`a::c/#/f`, 2]}", "c")]
+        [InlineData("{`extractFromUVCI`: [`a::c/#/f`, 3]}", "")]
+        [InlineData("{`extractFromUVCI`: [`a::c/#/f`, 4]}", "")]
+        [InlineData("{`extractFromUVCI`: [`a::c/#/f`, 5]}", "f")]
         public void Apply(string argsJson, object expectedResult)
         {
             // Arrange
@@ -223,7 +235,7 @@ namespace JsonLogic.Net.UnitTests
             // Arrange
             string jsonText = "{\">\": [{\"var\": \"MyNumber\"}, 3]}";
             var rule = JObject.Parse(jsonText);
-            object localData = new {MyNumber = 8};
+            object localData = new { MyNumber = 8 };
             var evaluator = new JsonLogicEvaluator(EvaluateOperators.Default);
 
             _output.WriteLine($"{MethodBase.GetCurrentMethod().Name}() Testing {rule} against {localData}");
@@ -232,7 +244,7 @@ namespace JsonLogic.Net.UnitTests
             var result = evaluator.Apply(rule, localData);
 
             // Assert
-            Assert.True((bool) result);
+            Assert.True((bool)result);
         }
 
         [Fact]
@@ -252,7 +264,7 @@ namespace JsonLogic.Net.UnitTests
             var result = evaluator.Apply(rule, localData);
 
             // Assert
-            Assert.True((bool) result);
+            Assert.True((bool)result);
         }
 
         [Fact]
@@ -273,15 +285,15 @@ namespace JsonLogic.Net.UnitTests
             var result = evaluator.Apply(rule, localData);
 
             // Assert
-            Assert.True((bool) result);
+            Assert.True((bool)result);
         }
 
         [Theory]
-        [InlineData("{`filter`:[{`var`:`parentArray`},{`and`:[{`===`:[{`var`:`childItem`},`c`]},{`filter`:[{`var`:`childArray`},{`===`:[{`var`:``},5]}]}]}]}", 
-            "{`parentArray`:[{`childArray`:[1,2,3,4,5],`childItem`:`a`},{`childArray`:[4,5],`childItem`:`b`},{`childArray`:[5,6,7,8],`childItem`:`c`}]}", 
+        [InlineData("{`filter`:[{`var`:`parentArray`},{`and`:[{`===`:[{`var`:`childItem`},`c`]},{`filter`:[{`var`:`childArray`},{`===`:[{`var`:``},5]}]}]}]}",
+            "{`parentArray`:[{`childArray`:[1,2,3,4,5],`childItem`:`a`},{`childArray`:[4,5],`childItem`:`b`},{`childArray`:[5,6,7,8],`childItem`:`c`}]}",
             "[{`childArray`:[5,6,7,8],`childItem`:`c`}]")]
-        [InlineData("{`filter`:[{`var`:`parentNonExistentArray`},{`and`:[{`===`:[{`var`:`childItem`},`c`]},{`filter`:[{`var`:`childArray`},{`===`:[{`var`:``},5]}]}]}]}", 
-            "{`parentArray`:[{`childArray`:[1,2,3,4,5],`childItem`:`a`},{`childArray`:[4,5],`childItem`:`b`},{`childArray`:[5,6,7,8],`childItem`:`c`}]}", 
+        [InlineData("{`filter`:[{`var`:`parentNonExistentArray`},{`and`:[{`===`:[{`var`:`childItem`},`c`]},{`filter`:[{`var`:`childArray`},{`===`:[{`var`:``},5]}]}]}]}",
+            "{`parentArray`:[{`childArray`:[1,2,3,4,5],`childItem`:`a`},{`childArray`:[4,5],`childItem`:`b`},{`childArray`:[5,6,7,8],`childItem`:`c`}]}",
             "null")]
         public void NestedFilterVariableAccess(string ruleJson, string dataJson, string expectedJson)
         {
@@ -303,7 +315,6 @@ namespace JsonLogic.Net.UnitTests
             // Assert
             Assert.Equal(expectedResult, result);
         }
-
 
         [Theory]
         [InlineData("{`==`: [1,`1`]}", true)]
@@ -341,7 +352,6 @@ namespace JsonLogic.Net.UnitTests
             Assert.Equal(expectedResult, actualResult);
         }
 
-
         [Theory]
         [InlineData("{`var`:`string`}", "{`string`:`a`}", "a")]
         [InlineData("{`var`:[`string`]}", "{`string`:`a`}", "a")]
@@ -375,14 +385,14 @@ namespace JsonLogic.Net.UnitTests
 
         [Theory]
         // Null first parameter
-        [InlineData("{`local`:[null, {`var`:[`root.child.2`]}]}", 
-            "{`root`: {`child`:[0,100,200,300]}}", 
+        [InlineData("{`local`:[null, {`var`:[`root.child.2`]}]}",
+            "{`root`: {`child`:[0,100,200,300]}}",
             null)]
-        [InlineData("{`local`:[{`var`:``}, {`var`:[`root.child.2`]}]}", 
-            "{`root`: {`child`:[0,100,200,300]}}", 
+        [InlineData("{`local`:[{`var`:``}, {`var`:[`root.child.2`]}]}",
+            "{`root`: {`child`:[0,100,200,300]}}",
             200.0)]
-        [InlineData("{`local`:[{`var`:`root`}, {`var`:[`root.child.2`]}]}", 
-            "{`root`: {`child`:[0,100,200,300]}}", 
+        [InlineData("{`local`:[{`var`:`root`}, {`var`:[`root.child.2`]}]}",
+            "{`root`: {`child`:[0,100,200,300]}}",
             null)]
         // Null parameters
         [InlineData("{`local`:[]}",
@@ -397,16 +407,16 @@ namespace JsonLogic.Net.UnitTests
             "{`root`: {`child`:[0,100,200,300]}}",
             "{`child`:[0,100,200,300]}")]
         // Simple local filter on complex object
-        [InlineData("{`local`:[{`var`:`root`}, {`var`:[`child.3`]}]}", 
-            "{`root`: {`child`:[0,100,200,300]}}", 
+        [InlineData("{`local`:[{`var`:`root`}, {`var`:[`child.3`]}]}",
+            "{`root`: {`child`:[0,100,200,300]}}",
             300.0)]
         // Filter array and get second element
-        [InlineData("{`local`:[{`filter`:[{`var`:`root.child`},{`>`:[{`var`:``},10]}]},{`var`:[1]}]}", 
-            "{`root`: {`child`:[0,100,200,300]}}", 
+        [InlineData("{`local`:[{`filter`:[{`var`:`root.child`},{`>`:[{`var`:``},10]}]},{`var`:[1]}]}",
+            "{`root`: {`child`:[0,100,200,300]}}",
             200.0)]
         // Filter array of objects and get value of property of first match
         [InlineData("{`local`:[{`filter`:[{`var`:`root.child1`},{`===`:[{`var`:`prop1`},`prop1 value 2`]}]},{`var`:[`0.prop2`]}]}",
-            "{`root`:{`child1`:[{`prop1`:`prop1 value 1`,`prop2`:`prop2 value 1`},{`prop1`:`prop1 value 2`,`prop2`:`prop2 value 2`}],`child2`:42}}", 
+            "{`root`:{`child1`:[{`prop1`:`prop1 value 1`,`prop2`:`prop2 value 1`},{`prop1`:`prop1 value 2`,`prop2`:`prop2 value 2`}],`child2`:42}}",
             "prop2 value 2")]
         // Filter array of objects and try to obtain property when no match found
         [InlineData("{`local`:[{`filter`:[{`var`:`root.child1`},{`===`:[{`var`:`prop1`},`prop1 value 3`]}]},{`var`:[`0.prop2`]}]}",
@@ -428,7 +438,6 @@ namespace JsonLogic.Net.UnitTests
                     : JsonFrom(expectedResult.ToString());
             Assert.Equal(expectedResult, actualResult);
         }
-
 
         [Theory]
         [JsonFileTestDefinitionAttribute("https://jsonlogic.com/tests.json")]
@@ -458,10 +467,9 @@ namespace JsonLogic.Net.UnitTests
             var rule = JObject.Parse(@"{""" + op + @""": [{""var"": ""missingField""}, 1000]}");
 
             var result = evaluator.Apply(rule, Data).IsTruthy();
-            
+
             Assert.Equal(expectedResult, result);
         }
-
 
         [Fact]
         public void Issue3_FilterBehaviorTest()
@@ -515,8 +523,6 @@ namespace JsonLogic.Net.UnitTests
 
             // Assert
             Assert.Equal(1, (result as object[]).Length);
-
-
         }
 
         private object GetDataObject(JToken token)

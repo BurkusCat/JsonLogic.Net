@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
 namespace JsonLogic.Net
@@ -323,14 +322,14 @@ namespace JsonLogic.Net
             AddOperator("extractFromUVCI", (p, args, data) =>
             {
                 var uvci = p.Apply(args[0], data);
-                var index = args[1];
+                var index = Convert.ToInt32(p.Apply(args[1], data));
 
                 if (!(uvci == null || uvci is string))
                 {
                     throw new Exception("'UVCI' argument(#1) of 'extractFromUVCI' must be either a string or null");
                 }
 
-                if (!(index is int))
+                if (index == null)
                 {
                     throw new Exception("'index' argument(#2) of 'extractFromUVCI' must be an integer");
                 }
@@ -407,7 +406,7 @@ namespace JsonLogic.Net
             }
 
             var prefixlessUvci = uvci.StartsWith(optionalPrefix) ? uvci.Substring(optionalPrefix.Length) : uvci;
-            var fragments = Regex.Split(prefixlessUvci, "/[/#:]/");
+            var fragments = prefixlessUvci.Split(new char[] { '/', '#', ':' });
             return index < fragments.Length ? fragments[index] : null;
         }
 
