@@ -203,6 +203,62 @@ namespace JsonLogic.Net.UnitTests
             }
         }
 
+        public static IEnumerable<object[]> PlusTimeTestData = new List<object[]>()
+        {
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 3, `day`]}",
+                DateTime.Parse("2011-08-15T20:17:46.3840000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 6, `day`]}",
+                DateTime.Parse("2011-08-18T20:17:46.3840000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 1, `year`]}",
+                DateTime.Parse("2012-08-12T20:17:46.3840000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 1, `month`]}",
+                DateTime.Parse("2011-09-12T20:17:46.3840000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 3, `hour`]}",
+                DateTime.Parse("2011-08-12T23:17:46.3840000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 10, `minute`]}",
+                DateTime.Parse("2011-08-12T20:27:46.3840000Z").ToUniversalTime(),
+            },
+            new object[]
+            {
+                "{`plusTime`: [`2011-08-12T20:17:46.384Z`, 5, `second`]}",
+                DateTime.Parse("2011-08-12T20:17:51.3840000Z").ToUniversalTime(),
+            },
+        };
+
+        [Theory]
+        [MemberData(nameof(PlusTimeTestData))]
+        public void PlusTime(string argsJson, object expectedResult)
+        {
+            // Arrange
+            var rules = JsonFrom(argsJson);
+            var jsonLogic = new JsonLogicEvaluator(EvaluateOperators.Default);
+
+            _output.WriteLine($"{MethodBase.GetCurrentMethod().Name}() Testing {rules} against {Data}");
+
+            // Act
+            var result = jsonLogic.Apply(rules, Data);
+
+            // Assert
+            Assert.Equal(expectedResult, result);
+        }
+
         [Theory]
         [InlineData("{`-`: [2,`something`]}", typeof(FormatException))]
         public void ApplyThrowsException(string rulesJson, Type exceptionType)

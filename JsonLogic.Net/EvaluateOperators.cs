@@ -294,8 +294,8 @@ namespace JsonLogic.Net
 
             AddOperator("plusTime", (p, args, data) =>
             {
-                var dateTimeString = p.Apply(args[0], data);
-                var amount = args[1];
+                var dateTime = p.Apply(args[0], data);
+                var amount = Convert.ToInt32(p.Apply(args[1], data));
                 var timeUnit = (string)args[2];
 
                 // All time units as an array.
@@ -311,12 +311,12 @@ namespace JsonLogic.Net
                     throw new Exception($"'unit' argument (#3) of 'plusTime' must be a string with one of the time units: ${string.Join(", ", timeUnits)}");
                 }
 
-                if (!(dateTimeString == null || dateTimeString is string))
+                if (!(dateTime == null || dateTime is DateTime))
                 {
-                    throw new Exception("'date' argument (#1) of 'plusTime' must be a string");
+                    throw new Exception("'date' argument (#1) of 'plusTime' must be a DateTime");
                 }
 
-                return PlusTime((string)dateTimeString, (int)amount, timeUnit);
+                return PlusTime((DateTime)dateTime, (int)amount, timeUnit);
             });
 
             AddOperator("extractFromUVCI", (p, args, data) =>
@@ -346,16 +346,12 @@ namespace JsonLogic.Net
         /// To convert a date(-time) string to a date-time value, specify an amount of 0, and any time unit.
         /// Note that plusTime does not permit other date-time values: expressions such as plusTime(plusTime("...", 0, "hour"), 10, "day") are not valid.
         /// </summary>
-        /// <param name="dateTimeString">a date-time in the allowed string format</param>
+        /// <param name="dateTime">a date-time</param>
         /// <param name="amount">the number of days/hours to add (may be negative)</param>
         /// <param name="timeUnit">string with a time unit</param>
         /// <returns>Modified date time</returns>
-        private DateTime PlusTime(string dateTimeString, int amount, string timeUnit)
+        private DateTime PlusTime(DateTime dateTime, int amount, string timeUnit)
         {
-            // the JS version of the library uses a weird regex parse for the date
-            // might be needed if this doesn't work for us
-            var dateTime = DateTime.Parse(dateTimeString);
-
             if (amount == 0)
             {
                 return dateTime;
